@@ -1,15 +1,20 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 
 import numpy as np
 import yahtzee_env
-
+import sys
 from tensorforce.execution import Runner
 from tensorforce.contrib.openai_gym import OpenAIGym
 from agent import create_agent
 
 environment = OpenAIGym('YahtzeeEnv-v0', visualize=False)
+environment.gym.reset()
+#sys.exit()
+
+
 agent       = create_agent(environment=environment)
 runner      = Runner(agent=agent, environment=environment)
+
 
 def episode_finished(r):
     if runner.episode % 50 == 0:

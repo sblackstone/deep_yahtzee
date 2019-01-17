@@ -15,7 +15,7 @@ class Dice:
         return(self.die_count)
 
     def as_observation(self):
-        return list(self.dice)
+        return self.dice + [ self.rolls ]
 
     def reset(self):
         self.die_count = [0] * 6

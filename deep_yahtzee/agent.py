@@ -31,8 +31,8 @@ from tensorforce.contrib.openai_gym import OpenAIGym
 # flattening layer
 
 network_spec = [
-    #dict(type='embedding', indices=100, size=32),
-    # dict(type'flatten'),
+    #dict(type='embedding', indices=40, size=6),
+    #dict(type='flatten'),
     dict(type='dense', size=25),
     dict(type='dense', size=25)
 ]
