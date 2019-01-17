@@ -26,7 +26,10 @@ TAKE_LARGE_STRAIGHT  = 10
 TAKE_CHANCE          = 11
 TAKE_YAHTZEE         = 12
 ROLL_DICE            = 13
-      
+
+SCORE_TYPES = ['main_1', 'main_2', 'main_3', 'main_4', 'main_5', 'main_6', 'three_of_a_kind', 'four_of_a_kind', 'full_house', 'small_straight', 'large_straight', 'chance', 'yahtzee' ]
+
+
 class YahtzeeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
@@ -40,7 +43,6 @@ class YahtzeeEnv(gym.Env):
                                                spaces.Discrete(2),
                                                spaces.Discrete(14)])
 
-        #SCORE_TYPES = ['main_1', 'main_2', 'main_3', 'main_4', 'main_5', 'main_6', 'three_of_a_kind', 'four_of_a_kind', 'full_house', 'small_straight', 'large_straight', 'chance', 'yahtzee' ]
         self.observation_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0, 1.0,  # Dice
                                                   0, #rolls left
                                                  -1, # Main 1
@@ -57,6 +59,7 @@ class YahtzeeEnv(gym.Env):
                                                  -1, # chance
                                                  -1, # yahtzee
                                                   0, # Score
+                                                  0, # STEP COUNT
                                             ]),
                                             high=np.array([6.0, 6.0, 6.0, 6.0, 6.0, # Dice
                                                   3.0, # Rolls Left
@@ -73,38 +76,47 @@ class YahtzeeEnv(gym.Env):
                                                   40.0,#large straight
                                                   30.0, #chance,
                                                   50.0, #Yahtzee
-                                                  400.0 # Score                                                                                            
+                                                  400.0, # Score                                                                                            
+                                                  100 #step count
                                               ]), dtype=np.float32)
 
-
-        pass
-        # Setup Action Space
-        # Setup Observation Space
                                            
     def seed(self, seed=None):
         pass
 
     def step(self, action):
-        reward, done = self.take_action(action)
-        return self.observe(), reward, done, {}
+        self.take_action(action)
+        return self.observe(), self.scorepad.total - self.step_count, self.scorepad.game_over(), {}
+
 
     def take_action(self, action):
-        print(action)
-        return 10.0, False
-
-    def calc_reward(self, action): 
-         reward = 10.0             
-         return(reward)
+        self.step_count += 1
+        #print(action)
+        action_id = action[5]
+        print("Action_id = {}".format(action_id))
+        if action_id == ROLL_DICE:
+            print("Rolling")
+            self.dice.roll(action[0:5])
+        else:
+            key = SCORE_TYPES[action_id]
+            classifications = self.dice.classifications()
+            if key in classifications:
+                print("Trying to take {}".format(key))
+                if self.scorepad.take_score(key, classifications[key]):
+                    print("SUCCESS!")
+                    self.dice.reset()
 
     def reset(self):
         # Reset VArs
         # Set current observation and return it.
+        print("Resetting")
         self.scorepad.reset()
         self.dice.reset()
+        self.step_count = 0
         return self.observe()
     
     def observe(self):
-        obs = self.dice.as_observation() + self.scorepad.as_observation()
+        obs = self.dice.as_observation() + self.scorepad.as_observation() + [  self.step_count ]
         return(obs)
         
     def render(self, mode='human'):

@@ -23,9 +23,16 @@ class ScorePad:
     
     def take_score(self, type, value):
         if not type in self.unscored_types():
-            raise Exception('Score Already Taken') 
-        self.scores[type] = value
-        self.total += value
+            print("Taking {} for {}".format(type, value))
+            self.scores[type] = value
+            self.total += value
+            return(True)
+        else:
+            return(False)
+            
+    def game_over(self):
+        return len(self.unscored_types()) == 0
+        
         
 if __name__ == "__main__":
     s = ScorePad()

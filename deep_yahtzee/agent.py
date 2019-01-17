@@ -33,8 +33,8 @@ from tensorforce.contrib.openai_gym import OpenAIGym
 network_spec = [
     #dict(type='embedding', indices=40, size=6),
     #dict(type='flatten'),
-    dict(type='dense', size=25),
-    dict(type='dense', size=25)
+    dict(type='dense', size=100),
+    dict(type='dense', size=100)
 ]
 
 
