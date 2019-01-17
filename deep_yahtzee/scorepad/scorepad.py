@@ -8,6 +8,15 @@ class ScorePad:
     def reset(self):
         self.scores = {}
     
+    def as_observation(self):
+        res = []
+        for i in SCORE_TYPES:
+            if i in self.scores.keys():
+                res.append(self.scores[i])
+            else:
+                res.append(0)
+        return(res)
+        
     def unscored_types(self):
         return [x for x in SCORE_TYPES if not x in self.scores.keys()]
     
@@ -23,3 +32,6 @@ if __name__ == "__main__":
     s.take_score('full_house', 25)
     print(s.unscored_types())
     print(s.scores)
+    print(s.as_observation())
+    print(len(SCORE_TYPES))
+    print(len(s.as_observation()))

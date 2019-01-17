@@ -14,6 +14,9 @@ class Dice:
             self.die_count[i] += 1 
         return(self.die_count)
 
+    def as_observation(self):
+        return list(self.dice)
+
     def reset(self):
         self.die_count = [0] * 6
         self.dice  = [0] * 5
