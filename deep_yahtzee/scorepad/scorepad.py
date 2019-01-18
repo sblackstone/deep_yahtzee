@@ -45,8 +45,8 @@ class ScorePad:
     
     def take_score(self, score_type, value):
         #import code; code.interact(local=dict(globals(), **locals()))
-        if score_type == 'yahtzee':
-            import code; code.interact(local=dict(globals(), **locals()))
+        #if score_type == 'yahtzee':
+            #import code; code.interact(local=dict(globals(), **locals()))
             
         if score_type in self.unscored_types():
             #print("Taking {} for {}".format(score_type, value))
