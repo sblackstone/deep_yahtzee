@@ -20,5 +20,7 @@ CHANCE          = 11
 YAHTZEE         = 12
 # 13-45 are for die rolls.
 
+SCORE_TYPE_COUNT = len(SCORE_TYPES)
+
 NUM_DICE = 5
 ROLLS_PER_TURN=3
