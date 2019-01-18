@@ -26,7 +26,7 @@ def episode_finished(r):
     return True
 
 try:
-    runner.run(episodes=10000000, max_episode_timesteps=52, episode_finished=episode_finished)
+    runner.run(episodes=10000000, max_episode_timesteps=52*10, episode_finished=episode_finished)
 except KeyboardInterrupt:    
     print("Closing up shop")
 runner.close()

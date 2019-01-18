@@ -129,8 +129,10 @@ class YahtzeeEnv(gym.Env):
     def reset(self):
         # Reset VArs
         # Set current observation and return it.
+        #self.scorepad.dump()
         self.episode_count += 1 
         if self.episode_count > 1:
+            self.scorepad.dump()
             sys.exit()
         self.scorepad.reset()
         self.dice.reset()

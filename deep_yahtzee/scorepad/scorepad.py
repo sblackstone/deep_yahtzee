@@ -13,7 +13,7 @@ class ScorePad:
                 score = ""             
             print("{}:\t{}".format(i, score))
         print("Total:\t{}".format(self.total))
-
+        print("\n")
     def reset(self):
         self.scores = {}
         self.total  = 0.0
