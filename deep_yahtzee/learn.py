@@ -25,8 +25,10 @@ def episode_finished(r):
     print
     return True
 
-
-runner.run(episodes=10000, max_episode_timesteps=20000, episode_finished=episode_finished)
+try:
+    runner.run(episodes=10000000, max_episode_timesteps=52, episode_finished=episode_finished)
+except KeyboardInterrupt:    
+    print("Closing up shop")
 runner.close()
 
 print("Learning finished. Total episodes: {ep}. Average reward of last 100 episodes: {ar}.".format(

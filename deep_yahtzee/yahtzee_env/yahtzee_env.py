@@ -25,7 +25,8 @@ TAKE_SMALL_STRAIGHT  = 9
 TAKE_LARGE_STRAIGHT  = 10
 TAKE_CHANCE          = 11
 TAKE_YAHTZEE         = 12
-ROLL_DICE            = 13
+# 13-45 are for die rolls.
+ 
 
 SCORE_TYPES = ['main_1', 'main_2', 'main_3', 'main_4', 'main_5', 'main_6', 'three_of_a_kind', 'four_of_a_kind', 'full_house', 'small_straight', 'large_straight', 'chance', 'yahtzee' ]
 
@@ -36,13 +37,8 @@ class YahtzeeEnv(gym.Env):
     def __init__(self):        
         self.scorepad          = ScorePad()
         self.dice              = Dice()
-        self.action_space      = spaces.Tuple([spaces.Discrete(2), 
-                                               spaces.Discrete(2), 
-                                               spaces.Discrete(2), 
-                                               spaces.Discrete(2), 
-                                               spaces.Discrete(2),
-                                               spaces.Discrete(14)])
-
+        self.episode_count     = 0
+        self.action_space      = spaces.Discrete(46)
         self.observation_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0, 1.0,  # Dice
                                                   0, #rolls left
                                                  -1, # Main 1
@@ -86,33 +82,61 @@ class YahtzeeEnv(gym.Env):
 
     def step(self, action):
         self.take_action(action)
-        return self.observe(), self.scorepad.total - self.step_count, self.scorepad.game_over(), {}
+        reward = self.calc_reward()
+        #print("Reward = {}".format(reward))
+        #print("*" * 50)
+        if self.scorepad.game_over():
+            print("Gamee Over!")
+            scorepad.dump()
+            sys.exit()
+        return self.observe(), self.calc_reward(), self.scorepad.game_over(), {}
 
+    def calc_reward(self):
+        return self.scorepad.total + (3 - self.dice.rolls) - self.bad_move_count
 
-    def take_action(self, action):
+    def take_action(self, action_id):
         self.step_count += 1
-        #print(action)
-        action_id = action[5]
-        print("Action_id = {}".format(action_id))
-        if action_id == ROLL_DICE:
-            print("Rolling")
-            self.dice.roll(action[0:5])
+        #print("Action_id = {}".format(action_id))
+        if action_id > 12:
+            #print("Lets Roll")
+            val = action_id - 13
+            result = []
+            while val > 0:
+                result.append(val & 1)
+                val = val >> 1
+            while(len(result) < 5):
+                result.append(0)                    
+            #print("Roll Array: {}".format(result))
+            if not self.dice.roll(result):
+                self.bad_move_count += 1
+
         else:
+            if self.dice.rolls == 3:
+                self.bad_move_count += 1
+                return
             key = SCORE_TYPES[action_id]
             classifications = self.dice.classifications()
             if key in classifications:
-                print("Trying to take {}".format(key))
                 if self.scorepad.take_score(key, classifications[key]):
-                    print("SUCCESS!")
+                    #print("Took {}".format(key))
+                    #self.scorepad.dump()
                     self.dice.reset()
+                    self.bad_move_count = 0
+                else:
+                    #print("Unable to take {}".format(key))
+                    self.bad_move_count += 1
 
     def reset(self):
         # Reset VArs
         # Set current observation and return it.
-        print("Resetting")
+        self.episode_count += 1 
+        if self.episode_count > 1:
+            sys.exit()
         self.scorepad.reset()
         self.dice.reset()
+        self.episode_count = 0
         self.step_count = 0
+        self.bad_move_count = 0
         return self.observe()
     
     def observe(self):

@@ -65,12 +65,13 @@ class Dice:
     # Always rolls everything on first move.
     def roll(self, arr):
         if self.rolls == 0:
+            #print("Tried to roll but out of turns")
             return False
         for i in range(NUM_DICE):
             # Ignore arr[i] if this is the first roll.
             if arr[i] or self.rolls == ROLLS_PER_TURN:
               self.dice[i] = np.random.randint(6) + 1
-        print(self.dice)
+        #print("The dice are now: {}".format(self.dice))
         self.rolls -= 1
         self.set_die_count()
         return True

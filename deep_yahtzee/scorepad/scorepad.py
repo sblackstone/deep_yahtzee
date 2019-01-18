@@ -5,6 +5,15 @@ class ScorePad:
     def __init__(self):
         self.reset()
 
+    def dump(self):
+        for i in SCORE_TYPES:
+            if i in self.scores:
+                score = self.scores[i]
+            else:
+                score = ""             
+            print("{}:\t{}".format(i, score))
+        print("Total:\t{}".format(self.total))
+
     def reset(self):
         self.scores = {}
         self.total  = 0.0
@@ -21,10 +30,11 @@ class ScorePad:
     def unscored_types(self):
         return [x for x in SCORE_TYPES if not x in self.scores.keys()]
     
-    def take_score(self, type, value):
-        if not type in self.unscored_types():
-            print("Taking {} for {}".format(type, value))
-            self.scores[type] = value
+    def take_score(self, score_type, value):
+        #import code; code.interact(local=dict(globals(), **locals()))
+        if score_type in self.unscored_types():
+            #print("Taking {} for {}".format(score_type, value))
+            self.scores[score_type] = value
             self.total += value
             return(True)
         else:
