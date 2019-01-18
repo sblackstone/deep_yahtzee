@@ -1,7 +1,5 @@
 import numpy as np
-
-NUM_DICE = 5
-ROLLS_PER_TURN=3
+import deep_yahtzee.constants as const
 
 class Dice:
 
@@ -20,7 +18,7 @@ class Dice:
     def reset(self):
         self.die_count = [0] * 7
         self.dice  = [0] * 5
-        self.rolls = ROLLS_PER_TURN
+        self.rolls = const.ROLLS_PER_TURN
         
     def classifications(self):
         self.klassifications = { "chance": sum(self.dice) }
@@ -67,9 +65,9 @@ class Dice:
         if self.rolls == 0:
             #print("Tried to roll but out of turns")
             return False
-        for i in range(NUM_DICE):
+        for i in range(const.NUM_DICE):
             # Ignore arr[i] if this is the first roll.
-            if arr[i] or self.rolls == ROLLS_PER_TURN:
+            if arr[i] or self.rolls == const.ROLLS_PER_TURN:
               self.dice[i] = np.random.randint(6) + 1
         #print("The dice are now: {}".format(self.dice))
         self.rolls -= 1

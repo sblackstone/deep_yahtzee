@@ -1,6 +1,6 @@
+import deep_yahtzee.constants
 from tabulate import tabulate
-
-SCORE_TYPES = ['main_1', 'main_2', 'main_3', 'main_4', 'main_5', 'main_6', 'three_of_a_kind', 'four_of_a_kind', 'full_house', 'small_straight', 'large_straight', 'chance', 'yahtzee' ]
+import deep_yahtzee.constants as const
 
 class ScorePad:
     def __init__(self):
@@ -8,7 +8,7 @@ class ScorePad:
     
     def dump(self):
         data = []
-        for i in SCORE_TYPES:
+        for i in const.SCORE_TYPES:
             if i in self.scores:
                 score = self.scores[i]
             else:
@@ -33,7 +33,7 @@ class ScorePad:
         
     def as_observation(self):
         res = []
-        for i in SCORE_TYPES:
+        for i in const.SCORE_TYPES:
             if i in self.scores.keys():
                 res.append(self.scores[i])
             else:
@@ -41,7 +41,7 @@ class ScorePad:
         return(res + [ self.total ])
 
     def unscored_types(self):
-        return [x for x in SCORE_TYPES if not x in self.scores.keys()]
+        return [x for x in const.SCORE_TYPES if not x in self.scores.keys()]
     
     def take_score(self, score_type, value):
         #import code; code.interact(local=dict(globals(), **locals()))
@@ -73,5 +73,5 @@ if __name__ == "__main__":
     print(s.unscored_types())
     print(s.scores)
     print(s.as_observation())
-    print(len(SCORE_TYPES))
+    print(len(const.SCORE_TYPES))
     print(len(s.as_observation()))
