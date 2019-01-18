@@ -51,7 +51,7 @@ class Dice:
                 key   = "small_straight"
                 self.klassifications[key] = 30
                 if i < 3 and self.die_count[i+4]:
-                    key   = "large_straight"
+                    key   = "large_straight"    
                     self.klassifications[key] = 40
                 
 

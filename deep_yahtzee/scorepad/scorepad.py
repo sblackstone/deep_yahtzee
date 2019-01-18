@@ -1,23 +1,36 @@
+from tabulate import tabulate
 
 SCORE_TYPES = ['main_1', 'main_2', 'main_3', 'main_4', 'main_5', 'main_6', 'three_of_a_kind', 'four_of_a_kind', 'full_house', 'small_straight', 'large_straight', 'chance', 'yahtzee' ]
 
 class ScorePad:
     def __init__(self):
         self.reset()
-
+    
     def dump(self):
+        data = []
         for i in SCORE_TYPES:
             if i in self.scores:
                 score = self.scores[i]
             else:
-                score = ""             
-            print("{}:\t{}".format(i, score))
-        print("Total:\t{}".format(self.total))
-        print("\n")
+                score = ""    
+            data.append([i, score])         
+        data.append(["SubTotal", self.main_total])
+        data.append(["Bonus", self.bonus])
+        data.append(["Score", self.score()])
+        print(tabulate(data))
+        print("\n\n")
+        
+        
     def reset(self):
-        self.scores = {}
-        self.total  = 0.0
+        self.scores     = {}
+        self.total      = 0.0
+        self.main_total = 0.0
+        self.bonus      = 0.0
     
+    
+    def score(self):
+        return self.total + self.bonus
+        
     def as_observation(self):
         res = []
         for i in SCORE_TYPES:
@@ -32,10 +45,18 @@ class ScorePad:
     
     def take_score(self, score_type, value):
         #import code; code.interact(local=dict(globals(), **locals()))
+        if score_type == 'yahtzee':
+            import code; code.interact(local=dict(globals(), **locals()))
+            
         if score_type in self.unscored_types():
             #print("Taking {} for {}".format(score_type, value))
             self.scores[score_type] = value
             self.total += value
+            if score_type[:4] == 'main':
+                self.main_total += value
+                if self.main_total > 62:
+                    self.bonus = 35
+
             return(True)
         else:
             return(False)

@@ -38,6 +38,7 @@ class YahtzeeEnv(gym.Env):
         self.scorepad          = ScorePad()
         self.dice              = Dice()
         self.episode_count     = 0
+        self.top_score         = 0.0
         self.action_space      = spaces.Discrete(46)
         self.observation_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0, 1.0,  # Dice
                                                   0, #rolls left
@@ -92,7 +93,7 @@ class YahtzeeEnv(gym.Env):
         return self.observe(), self.calc_reward(), self.scorepad.game_over(), {}
 
     def calc_reward(self):
-        return self.scorepad.total + (3 - self.dice.rolls) - self.bad_move_count
+        return self.scorepad.score() + (3 - self.dice.rolls) - self.bad_move_count
 
     def take_action(self, action_id):
         self.step_count += 1
@@ -115,7 +116,12 @@ class YahtzeeEnv(gym.Env):
                 self.bad_move_count += 1
                 return
             key = SCORE_TYPES[action_id]
+            #if key == 'yahtzee':
+            #    import code; code.interact(local=dict(globals(), **locals()))
             classifications = self.dice.classifications()
+            if 'yahtzee' in self.dice.classifications() and key == 'yahtzee':
+                import code; code.interact(local=dict(globals(), **locals()))
+                
             if key in classifications:
                 if self.scorepad.take_score(key, classifications[key]):
                     #print("Took {}".format(key))
@@ -129,11 +135,11 @@ class YahtzeeEnv(gym.Env):
     def reset(self):
         # Reset VArs
         # Set current observation and return it.
-        #self.scorepad.dump()
-        self.episode_count += 1 
-        if self.episode_count > 1:
+        if self.scorepad.score() > self.top_score:
             self.scorepad.dump()
-            sys.exit()
+            self.top_score = self.scorepad.score() 
+
+        self.episode_count += 1 
         self.scorepad.reset()
         self.dice.reset()
         self.episode_count = 0
