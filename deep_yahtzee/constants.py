@@ -5,19 +5,19 @@ MAX_MONTHS=5
 DEFAULT_CASH=1e5
 
 # ACTIONS  
-TAKE_MAIN_1          = 0
-TAKE_MAIN_2          = 1
-TAKE_MAIN_3          = 2
-TAKE_MAIN_4          = 3
-TAKE_MAIN_5          = 4
-TAKE_MAIN_6          = 5
-TAKE_THREE_OF_A_KIND = 6
-TAKE_FOUR_OF_A_KIND  = 7
-TAKE_FULL_HOUSE      = 8
-TAKE_SMALL_STRAIGHT  = 9
-TAKE_LARGE_STRAIGHT  = 10
-TAKE_CHANCE          = 11
-TAKE_YAHTZEE         = 12
+MAIN_1          = 0
+MAIN_2          = 1
+MAIN_3          = 2
+MAIN_4          = 3
+MAIN_5          = 4
+MAIN_6          = 5
+THREE_OF_A_KIND = 6
+FOUR_OF_A_KIND  = 7
+FULL_HOUSE      = 8
+SMALL_STRAIGHT  = 9
+LARGE_STRAIGHT  = 10
+CHANCE          = 11
+YAHTZEE         = 12
 # 13-45 are for die rolls.
 
 NUM_DICE = 5
