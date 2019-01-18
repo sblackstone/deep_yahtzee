@@ -119,8 +119,8 @@ class YahtzeeEnv(gym.Env):
             #if key == 'yahtzee':
             #    import code; code.interact(local=dict(globals(), **locals()))
             classifications = self.dice.classifications()
-            if 'yahtzee' in self.dice.classifications() and key == 'yahtzee':
-                import code; code.interact(local=dict(globals(), **locals()))
+            #if 'yahtzee' in self.dice.classifications() and key == 'yahtzee':
+            #    import code; code.interact(local=dict(globals(), **locals()))
                 
             if key in classifications:
                 if self.scorepad.take_score(key, classifications[key]):
