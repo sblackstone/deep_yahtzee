@@ -8,12 +8,12 @@ class ScorePad:
     
     def dump(self):
         data = []
-        for i in const.SCORE_TYPES:
-            if i in self.scores:
+        for i in range(const.SCORE_TYPE_COUNT):
+            if self.scores[i] > -1:
                 score = self.scores[i]
             else:
                 score = ""    
-            data.append([i, score])         
+            data.append([const.SCORE_TYPES[i], score])         
         data.append(["SubTotal", self.main_total])
         data.append(["Bonus", self.bonus])
         data.append(["Score", self.score()])
@@ -22,7 +22,7 @@ class ScorePad:
         
         
     def reset(self):
-        self.scores     = {}
+        self.scores     = [-1] * const.SCORE_TYPE_COUNT
         self.total      = 0.0
         self.main_total = 0.0
         self.bonus      = 0.0
@@ -32,16 +32,10 @@ class ScorePad:
         return self.total + self.bonus
         
     def as_observation(self):
-        res = []
-        for i in const.SCORE_TYPES:
-            if i in self.scores.keys():
-                res.append(self.scores[i])
-            else:
-                res.append(-1)
-        return(res + [ self.total ])
+        return(self.scores + [ self.total ])
 
     def unscored_types(self):
-        return [x for x in const.SCORE_TYPES if not x in self.scores.keys()]
+        return [x for x in range(const.SCORE_TYPE_COUNT) if self.scores[x] == -1]
     
     def take_score(self, score_type, value):
         #import code; code.interact(local=dict(globals(), **locals()))
@@ -52,7 +46,7 @@ class ScorePad:
             #print("Taking {} for {}".format(score_type, value))
             self.scores[score_type] = value
             self.total += value
-            if score_type[:4] == 'main':
+            if score_type < 6:
                 self.main_total += value
                 if self.main_total > 62:
                     self.bonus = 35
@@ -68,10 +62,17 @@ class ScorePad:
 if __name__ == "__main__":
     s = ScorePad()
     print(s.unscored_types())
-    s.take_score('main_6', 24)
-    s.take_score('full_house', 25)
+    s.take_score(const.MAIN_1, 24)
+    s.take_score(const.MAIN_2, 24)
+    s.take_score(const.MAIN_3, 24)
+    s.take_score(const.MAIN_4, 24)
+    s.take_score(const.MAIN_5, 24)
+    s.take_score(const.MAIN_5, 24)
+
+    s.take_score(const.FULL_HOUSE, 25)
     print(s.unscored_types())
     print(s.scores)
+    s.dump()
     print(s.as_observation())
     print(len(const.SCORE_TYPES))
     print(len(s.as_observation()))
