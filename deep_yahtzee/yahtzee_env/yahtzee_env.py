@@ -21,6 +21,19 @@ class YahtzeeEnv(gym.Env):
         self.action_space      = spaces.Discrete(46)
         self.observation_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0, 1.0,  # Dice
                                                   0, #rolls left
+                                                  0, # Main 1...
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0, # Main 6
+                                                  0, # TOK
+                                                  0, # FOK
+                                                  0, # FH
+                                                  0, # SS
+                                                  0, # LS
+                                                  0, # CHC
+                                                  0, # Yahtzee
                                                  -1, # Main 1
                                                  -1, # Main 2
                                                  -1, # Main 3
@@ -39,6 +52,19 @@ class YahtzeeEnv(gym.Env):
                                             ]),
                                             high=np.array([6.0, 6.0, 6.0, 6.0, 6.0, # Dice
                                                   3.0, # Rolls Left
+                                                  5.0, # Main 1
+                                                  10.0,# Main 2
+                                                  15.0,# Main 3
+                                                  20.0,# Main 4
+                                                  25.0,# Main 5
+                                                  30.0,# Main 6
+                                                  30.0,#three of kind
+                                                  30.0,#four of kind
+                                                  25.0,#full house
+                                                  30.0,#small straight
+                                                  40.0,#large straight
+                                                  30.0, #chance,
+                                                  50.0, #Yahtzee
                                                   5.0, # Main 1
                                                   10.0,# Main 2
                                                   15.0,# Main 3

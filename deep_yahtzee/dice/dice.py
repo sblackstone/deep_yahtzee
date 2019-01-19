@@ -15,13 +15,20 @@ class Dice:
             self.die_sum += i
 
     def as_observation(self):
-        return self.dice + [ self.rolls ]
+        return self.dice + [ self.rolls ] + self.scorables()
+        
+    def scorables(self):
+        res = []
+        for i in range(const.SCORE_TYPE_COUNT):
+            res.append(self.score_for_category(i))
+        return(res)
+            
 
     def reset(self):
         self.die_count = [0] * 7
         self.dice  = [0] * 5
         self.rolls = const.ROLLS_PER_TURN
-    
+        self.set_die_count_sum()
     # ACTIONS  
     #MAIN_1          = 0
     #MAIN_2          = 1
