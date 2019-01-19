@@ -78,7 +78,8 @@ class YahtzeeEnv(gym.Env):
         self.step_count += 1
         #print("Action_id = {}".format(action_id))
         if action_id > 12:
-            #print("Lets Roll")
+            # We represent the pattern of which die to roll as the binary
+            # representation of the action chosen.  They map to 0-31
             val = action_id - 13
             result = []
             while val > 0:
