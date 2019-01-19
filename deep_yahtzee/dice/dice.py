@@ -1,16 +1,18 @@
 import numpy as np
 import deep_yahtzee.constants as const
+import sys
 
 class Dice:
 
     def __init__(self):
         self.reset()
 
-    def set_die_count(self):
+    def set_die_count_sum(self):
         self.die_count = [0] * 7
+        self.die_sum   = 0
         for i in self.dice:
             self.die_count[i] += 1 
-        return(self.die_count)
+            self.die_sum += i
 
     def as_observation(self):
         return self.dice + [ self.rolls ]
@@ -33,43 +35,51 @@ class Dice:
     #SMALL_STRAIGHT  = 9
     #LARGE_STRAIGHT  = 10
     #CHANCE          = 11
-    #YAHTZEE         = 12
+    #YAHTZEE         = 12        
     
-    def classifications(self):
-        self.klassifications = [ -1 ] * const.SCORE_TYPE_COUNT
-        self.klassifications[const.CHANCE] = 
+    def score_for_category(self, category):
+        if category <= const.MAIN_6:
+            return self.die_count[category+1] * (category + 1)
         
-        for i in range(1,7):
-            if self.die_count[i] > 0:
-                self.klassifications[i-1] = self.die_count[i] * i
+        if category == const.CHANCE:
+            return self.die_sum
 
-            if self.die_count[i] >= 3:
-                key = const.THREE_OF_A_KIND
-                self.klassifications[key] = sum(self.dice)
-                for j in range(1,7):
-                    if i != j and self.die_count[j] == 2:
-                        self.klassifications[const.FULL_HOUSE] = 25                        
+        if category == const.THREE_OF_A_KIND:
+            for i in range(1,7):
+                if self.die_count[i] >= 3:
+                    return self.die_sum
 
-            if self.die_count[i] >= 4:
-                self.klassifications[const.FOUR_OF_A_KIND] = sum(self.dice)
+        if category == const.FOUR_OF_A_KIND:
+            for i in range(1,7):
+                if self.die_count[i] >= 4:
+                    return self.die_sum
 
-            if self.die_count[i] == 5:
-                key = const.YAHTZEE
-                self.klassifications[key] = 50
+        if category == const.YAHTZEE:
+            for i in range(1,7):
+                if self.die_count[i] == 5:
+                    return 50
 
-        for i in range(1, 4):
-            if self.die_count[i] and self.die_count[i+1] and self.die_count[i+2] and self.die_count[i+3]:
-                key   = const.SMALL_STRAIGHT
-                self.klassifications[key] = 30
-                if i < 3 and self.die_count[i+4]:
-                    key   = const.LARGE_STRAIGHT    
-                    self.klassifications[key] = 40
-                
-
-
-        return self.klassifications
         
+        if category == const.FULL_HOUSE:
+            cnt = 0
+            for i in range(1,7):
+                if self.die_count[i] == 3 or self.die_count[i] == 2:
+                    cnt += 1
+            if cnt == 2:
+                return 25
+            else:
+                return 0
         
+        if category == const.SMALL_STRAIGHT or category == const.LARGE_STRAIGHT:
+            for i in range(1, 4):
+                if self.die_count[i] and self.die_count[i+1] and self.die_count[i+2] and self.die_count[i+3]:
+                    if category == const.SMALL_STRAIGHT:
+                        return 30
+                    if category == const.LARGE_STRAIGHT and i < 3 and self.die_count[i+4]:
+                        return 40
+        # Default!
+        return 0
+                                        
     
     # Accepts an array of the form [0,1,1,0,0]
     # which means re-roll dies 1 and 2.
@@ -84,21 +94,47 @@ class Dice:
               self.dice[i] = np.random.randint(6) + 1
         #print("The dice are now: {}".format(self.dice))
         self.rolls -= 1
-        self.set_die_count()
+        self.set_die_count_sum()
         return True
 
+    def debug_dice(self, dice):
+        self.dice = dice
+        self.set_die_count_sum()
+    
 
 
 if __name__ == "__main__":
+
+
     d = Dice()
-    print(d.roll([1,0,1,0,1]))
-    print(d.dice)
-    print(d.roll([1,0,1,0,1]))
-    print(d.dice)
-    print(d.roll([1,0,1,0,1]))
-    print(d.dice)
-    print(d.roll([1,0,1,0,1]))
-    print(d.dice)
-    print(d.die_count[1:6])
-    print(d.classifications())
+    
+    d.debug_dice([1,1,2,3,4])
+    print(d.score_for_category(const.MAIN_1))# == 2)
+
+    d.debug_dice([1,1,2,3,4])
+    print(d.score_for_category(const.MAIN_4))# == 4)
+
+    d.debug_dice([1,5,3,5,5])
+    print(d.score_for_category(const.THREE_OF_A_KIND))# == 19)
+
+    d.debug_dice([4,4,5,4,4])    
+    print(d.score_for_category(const.FOUR_OF_A_KIND))# == 21)
+
+    d.debug_dice([3,3,3,4,4])    
+    print(d.score_for_category(const.FULL_HOUSE))# == 25)
+
+    d.debug_dice([3,4,5,5,2])    
+    print(d.score_for_category(const.SMALL_STRAIGHT))# == 50)
+
+    d.debug_dice([3,4,5,5,2])    
+    print(d.score_for_category(const.LARGE_STRAIGHT))# == 0)
+
+    d.debug_dice([1,2,3,4,5])    
+    print(d.score_for_category(const.LARGE_STRAIGHT))# == 40)
+
+    d.debug_dice([3,4,5,5,2])    
+    print(d.score_for_category(const.CHANCE))# == 19)
+
+    d.debug_dice([5,5,5,5,5])
+    print(d.score_for_category(const.YAHTZEE))# == 50)
         
