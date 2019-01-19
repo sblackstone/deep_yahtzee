@@ -65,10 +65,10 @@ class YahtzeeEnv(gym.Env):
         reward = self.calc_reward()
         #print("Reward = {}".format(reward))
         #print("*" * 50)
-        if self.scorepad.game_over():
-            print("Gamee Over!")
-            scorepad.dump()
-            sys.exit()
+        #if self.scorepad.game_over():
+        #    print("Gamee Over!")
+        #    self.scorepad.dump()
+        #    sys.exit()
         return self.observe(), self.calc_reward(), self.scorepad.game_over(), {}
 
     def calc_reward(self):
@@ -95,22 +95,15 @@ class YahtzeeEnv(gym.Env):
             if self.dice.rolls == 3:
                 self.bad_move_count += 1
                 return
-            key = const.SCORE_TYPES[action_id]
-            #if key == 'yahtzee':
-            #    import code; code.interact(local=dict(globals(), **locals()))
-            classifications = self.dice.classifications()
-            #if 'yahtzee' in self.dice.classifications() and key == 'yahtzee':
-            #    import code; code.interact(local=dict(globals(), **locals()))
-                
-            if key in classifications:
-                if self.scorepad.take_score(key, classifications[key]):
-                    #print("Took {}".format(key))
-                    #self.scorepad.dump()
-                    self.dice.reset()
-                    self.bad_move_count = 0
-                else:
-                    #print("Unable to take {}".format(key))
-                    self.bad_move_count += 1
+
+            if self.scorepad.take_score(action_id, self.dice.score_for_category(action_id)):
+                #print("Took {}".format(key))
+                #self.scorepad.dump()
+                self.dice.reset()
+                self.bad_move_count = 0
+            else:
+                #print("Unable to take {}".format(key))
+                self.bad_move_count += 1
 
     def reset(self):
         # Reset VArs
