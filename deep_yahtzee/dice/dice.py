@@ -19,37 +19,50 @@ class Dice:
         self.die_count = [0] * 7
         self.dice  = [0] * 5
         self.rolls = const.ROLLS_PER_TURN
-        
+    
+    # ACTIONS  
+    #MAIN_1          = 0
+    #MAIN_2          = 1
+    #MAIN_3          = 2
+    #MAIN_4          = 3
+    #MAIN_5          = 4
+    #MAIN_6          = 5
+    #THREE_OF_A_KIND = 6
+    #FOUR_OF_A_KIND  = 7
+    #FULL_HOUSE      = 8
+    #SMALL_STRAIGHT  = 9
+    #LARGE_STRAIGHT  = 10
+    #CHANCE          = 11
+    #YAHTZEE         = 12
+    
     def classifications(self):
-        self.klassifications = { "chance": sum(self.dice) }
+        self.klassifications = [ -1 ] * const.SCORE_TYPE_COUNT
+        self.klassifications[const.CHANCE] = 
         
         for i in range(1,7):
             if self.die_count[i] > 0:
-                key = "main_{}".format(i)
-                self.klassifications[key] = self.die_count[i] * i
+                self.klassifications[i-1] = self.die_count[i] * i
 
             if self.die_count[i] >= 3:
-                key = "three_of_a_kind"
+                key = const.THREE_OF_A_KIND
                 self.klassifications[key] = sum(self.dice)
                 for j in range(1,7):
                     if i != j and self.die_count[j] == 2:
-                        key = "full_house"
-                        self.klassifications[key] = 25                        
+                        self.klassifications[const.FULL_HOUSE] = 25                        
 
             if self.die_count[i] >= 4:
-                key = "four_of_a_kind"
-                self.klassifications[key] = sum(self.dice)
+                self.klassifications[const.FOUR_OF_A_KIND] = sum(self.dice)
 
             if self.die_count[i] == 5:
-                key = "yahtzee"
+                key = const.YAHTZEE
                 self.klassifications[key] = 50
 
         for i in range(1, 4):
             if self.die_count[i] and self.die_count[i+1] and self.die_count[i+2] and self.die_count[i+3]:
-                key   = "small_straight"
+                key   = const.SMALL_STRAIGHT
                 self.klassifications[key] = 30
                 if i < 3 and self.die_count[i+4]:
-                    key   = "large_straight"    
+                    key   = const.LARGE_STRAIGHT    
                     self.klassifications[key] = 40
                 
 
