@@ -4,7 +4,8 @@ import sys
 
 class Dice:
 
-    def __init__(self):
+    def __init__(self, scorepad):
+        self.scorepad = scorepad
         self.reset()
 
     def set_die_count_sum(self):
@@ -20,7 +21,10 @@ class Dice:
     def scorables(self):
         res = []
         for i in range(const.SCORE_TYPE_COUNT):
-            res.append(self.score_for_category(i))
+            if self.scorepad.scores[i] > -1:
+                res.append(0)
+            else:
+                res.append(self.score_for_category(i))
         return(res)
             
 

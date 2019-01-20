@@ -15,7 +15,7 @@ class YahtzeeEnv(gym.Env):
 
     def __init__(self):        
         self.scorepad          = ScorePad()
-        self.dice              = Dice()
+        self.dice              = Dice(self.scorepad) # TODO.  remove solitary ugly hack.
         self.episode_count     = 0
         self.top_score         = 0.0
         self.action_space      = spaces.Discrete(46)
@@ -95,10 +95,12 @@ class YahtzeeEnv(gym.Env):
         #    print("Gamee Over!")
         #    self.scorepad.dump()
         #    sys.exit()
+        #if self.scorepad.game_over():
+        #    print("GAME OVER!")
         return self.observe(), self.calc_reward(), self.scorepad.game_over(), {}
 
     def calc_reward(self):
-        return self.scorepad.score() + (3 - self.dice.rolls) - self.bad_move_count + ((self.scorepad.main_total / 63.0)*35)
+        return self.scorepad.score() + (3 - self.dice.rolls) - 0.25*self.bad_move_count + ((self.scorepad.main_total / 63.0)*35)
 
     def take_action(self, action_id):
         self.step_count += 1
@@ -123,12 +125,13 @@ class YahtzeeEnv(gym.Env):
                 return
 
             if self.scorepad.take_score(action_id, self.dice.score_for_category(action_id)):
-                #print("Took {}".format(action_id))
+                #print("Took {}".format(key))
                 #self.scorepad.dump()
                 self.dice.reset()
             else:
                 #print("Unable to take {}".format(key))
-                self.bad_move_count += 1
+                if action_id != const.YAHTZEE:
+                    self.bad_move_count += 1
 
     def reset(self):
         # Reset VArs

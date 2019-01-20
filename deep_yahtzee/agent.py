@@ -34,7 +34,7 @@ network_spec = [
     #dict(type='embedding', indices=40, size=6),
     #dict(type='flatten'),
     #dict(type='dense', size=32),
-    dict(type='dense', size=32)
+    dict(type='dense', size=39)
 ]
 
 
