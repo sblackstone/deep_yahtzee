@@ -14,7 +14,7 @@ class ScorePad:
             else:
                 score = ""    
             data.append([const.SCORE_TYPES[i], score])         
-        data.append(["SubTotal", self.main_total])
+        data.append(["Main Total", self.main_total])
         data.append(["Bonus", self.bonus])
         data.append(["Score", self.score()])
         print(tabulate(data))
@@ -49,6 +49,7 @@ class ScorePad:
             if score_type < 6:
                 self.main_total += value
                 if self.main_total > 62:
+                    print("Bonus Unlocked")
                     self.bonus = 35
 
             return(True)

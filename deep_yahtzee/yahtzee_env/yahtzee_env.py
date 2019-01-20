@@ -98,7 +98,7 @@ class YahtzeeEnv(gym.Env):
         return self.observe(), self.calc_reward(), self.scorepad.game_over(), {}
 
     def calc_reward(self):
-        return self.scorepad.score() + (3 - self.dice.rolls) - self.bad_move_count
+        return self.scorepad.score() + (3 - self.dice.rolls) - self.bad_move_count + ((self.scorepad.main_total / 63.0)*35)
 
     def take_action(self, action_id):
         self.step_count += 1
@@ -123,10 +123,9 @@ class YahtzeeEnv(gym.Env):
                 return
 
             if self.scorepad.take_score(action_id, self.dice.score_for_category(action_id)):
-                #print("Took {}".format(key))
+                #print("Took {}".format(action_id))
                 #self.scorepad.dump()
                 self.dice.reset()
-                self.bad_move_count = 0
             else:
                 #print("Unable to take {}".format(key))
                 self.bad_move_count += 1
